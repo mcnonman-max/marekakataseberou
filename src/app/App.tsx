@@ -1,5 +1,5 @@
 import { useState } from "react";
-import logoKM from "../imports/logoo.png";
+import logoKM from "../imports/logo_km-1.png";
 import headerPhoto from "../imports/Sni_mek_obrazovky_2026-06-15_v_15.09.03.png";
 import barnNightPhoto from "../imports/Sni_mek_obrazovky_2026-06-15_v_12.08.39.png";
 import couplePhoto from "../imports/IMG_0234_1.png";
@@ -134,7 +134,11 @@ export default function App() {
             src={logoKM}
             alt="Káta & Marek"
             className="mx-auto mb-4"
-            style={{ width: "220px", height: "auto" }}
+            style={{
+              width: "220px",
+              height: "auto",
+              filter: "brightness(2.5) contrast(1.1) drop-shadow(0 0 12px rgba(255,240,210,0.9)) drop-shadow(0 0 30px rgba(196,168,130,0.8)) drop-shadow(0 0 60px rgba(196,168,130,0.4))",
+            }}
           />
 
           {/* Datum */}
