@@ -1,11 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import logoKM from "../imports/logo_km-1.png";
 import headerPhoto from "../imports/Sni_mek_obrazovky_2026-06-15_v_15.09.03.png";
 import barnNightPhoto from "../imports/Sni_mek_obrazovky_2026-06-15_v_12.08.39.png";
 import couplePhoto from "../imports/IMG_0234_1.png";
-import { MapPin, Clock, Calendar, ChevronRight, Heart, Users, Utensils, Music, Camera, Phone, ChevronDown, ArrowLeft, Shirt } from "lucide-react";
-
-
+import { MapPin, Clock, Calendar, ChevronRight, Heart, Utensils, Music, Phone, ChevronDown, ArrowLeft, Shirt, Users } from "lucide-react";
 
 const schedule = [
   { time: "12:00", event: "Příjezd hostů", icon: Users },
@@ -17,30 +15,13 @@ const schedule = [
   { time: "21:00", event: "Tanec s prskavkami", icon: Music },
 ];
 
-
 const faqs = [
-  {
-    q: "Kde se mohu ubytovat?",
-    a: "Doporučujeme Pension Borohrádek (2 km) nebo Hotel Orlice v Týništi nad Orlicí (8 km). Rezervujte prosím s dostatečným předstihem.",
-  },
-  {
-    q: "Je na místě parkování?",
-    a: "Ano, přímo u areálu Stodoly Borohrádek je parkoviště s kapacitou cca 80 míst. Někam to narveme :-)",
-  },
-  {
-    q: "Mohu přivést děti?",
-    a: "S cílem umožnit všem hostům, včetně rodičů, relaxační večer, rozhodli jsme uspořádat náš svatební den pouze pro dospělé. Doufáme, že toto předběžné oznámení nebude překážkou a i nadále se k nám připojíte oslavit tento jedinečný den. V případě dotazů nás určitě neváhejte kontaktovat.",
-  },
-  {
-    q: "Svatební dary?",
-    a: "Střechu nad hlavou už máme, ale to nejkrásnější teprve začíná. Místo tradičních darů nám můžete přispět na společné zážitky, cesty a sny, které nás čekají.",
-  },
-  {
-    q: "Kdy začíná program?",
-    a: "Sraz hostů je od 12:00. Obřad začíná v 13:00. Moc prosíme o dochvilnost.",
-  },
+  { q: "Kde se mohu ubytovat?", a: "Doporučujeme Pension Borohrádek (2 km) nebo Hotel Orlice v Týništi nad Orlicí (8 km). Rezervujte prosím s dostatečným předstihem." },
+  { q: "Je na místě parkování?", a: "Ano, přímo u areálu Stodoly Borohrádek je parkoviště s kapacitou cca 80 míst. Někam to narveme :-)" },
+  { q: "Mohu přivést děti?", a: "S cílem umožnit všem hostům, včetně rodičů, relaxační večer, rozhodli jsme uspořádat náš svatební den pouze pro dospělé. Doufáme, že toto předběžné oznámení nebude překážkou a i nadále se k nám připojíte oslavit tento jedinečný den. V případě dotazů nás určitě neváhejte kontaktovat." },
+  { q: "Svatební dary?", a: "Střechu nad hlavou už máme, ale to nejkrásnější teprve začíná. Místo tradičních darů nám můžete přispět na společné zážitky, cesty a sny, které nás čekají." },
+  { q: "Kdy začíná program?", a: "Sraz hostů je od 12:00. Obřad začíná v 13:00. Moc prosíme o dochvilnost." },
 ];
-
 
 const contacts = [
   { role: "Ženich", name: "Marek Čehovský", tel: "721 573 785" },
@@ -50,303 +31,281 @@ const contacts = [
 
 type Tab = "prehled" | "program";
 
-const cardShadow = { boxShadow: "0 2px 16px rgba(107, 58, 58, 0.08), 0 1px 4px rgba(107, 58, 58, 0.05)" };
-const cardShadowHover = { boxShadow: "0 6px 28px rgba(107, 58, 58, 0.14), 0 2px 8px rgba(107, 58, 58, 0.08)" };
+// Liquid glass card style
+const glass = {
+  background: "rgba(255,255,255,0.07)",
+  backdropFilter: "blur(20px)",
+  WebkitBackdropFilter: "blur(20px)",
+  border: "1px solid rgba(255,255,255,0.12)",
+  boxShadow: "0 4px 32px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.1)",
+} as React.CSSProperties;
+
+const glassStrong = {
+  background: "rgba(255,255,255,0.1)",
+  backdropFilter: "blur(30px)",
+  WebkitBackdropFilter: "blur(30px)",
+  border: "1px solid rgba(255,255,255,0.15)",
+  boxShadow: "0 8px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.15)",
+} as React.CSSProperties;
 
 export default function App() {
+  useEffect(() => {
+    const link = document.querySelector("link[rel~='icon']") as HTMLLinkElement || document.createElement("link");
+    link.rel = "icon";
+    link.href = logoKM;
+    document.head.appendChild(link);
+    document.title = "Svatba Mára & Kačka";
+  }, []);
+
   const [activeTab, setActiveTab] = useState<Tab>("prehled");
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [showContacts, setShowContacts] = useState(false);
 
+  const days = Math.ceil((new Date("2026-09-15").getTime() - Date.now()) / 86400000);
+  const [showCalPicker, setShowCalPicker] = useState(false);
+
+  const downloadICS = () => {
+    const ics = [
+      "BEGIN:VCALENDAR",
+      "VERSION:2.0",
+      "PRODID:-//Svatba MK//CS",
+      "BEGIN:VEVENT",
+      "DTSTART:20260915T120000",
+      "DTEND:20260915T230000",
+      "SUMMARY:Svatba Mára & Kačka",
+      "LOCATION:Stodola Borohrádek\\, Husova 225\\, 517 24 Borohrádek",
+      "DESCRIPTION:Svatba Mára & Kateřiny",
+      "END:VEVENT",
+      "END:VCALENDAR",
+    ].join("\r\n");
+    const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "svatba-mara-kacka.ics";
+    a.click();
+    URL.revokeObjectURL(url);
+    setShowCalPicker(false);
+  };
+
   return (
-    <div
-      className="min-h-screen bg-background"
-      style={{ fontFamily: "'Nunito', sans-serif" }}
-    >
-      {/* Contacts page overlay */}
+    <div className="min-h-screen relative overflow-x-hidden" style={{ fontFamily: "'Nunito', sans-serif", background: "#1a0e12" }}>
+
+      {/* Background — foto stodoly jako ambient backdrop */}
+      <div className="fixed inset-0 z-0">
+        <img src={headerPhoto} alt="" aria-hidden className="w-full h-full object-cover opacity-60" />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, rgba(107,58,58,0.35) 0%, rgba(26,14,18,0.55) 50%, rgba(110,45,58,0.3) 100%)" }} />
+        {/* Ambient blobs */}
+        <div className="absolute top-[-20%] left-[-10%] w-[60vw] h-[60vw] rounded-full opacity-20" style={{ background: "radial-gradient(circle, #6B3A3A, transparent 70%)" }} />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] rounded-full opacity-15" style={{ background: "radial-gradient(circle, #C4A882, transparent 70%)" }} />
+      </div>
+
+      {/* Contacts overlay */}
       {showContacts && (
-        <div className="fixed inset-0 z-50 bg-background flex flex-col">
-          <div className="bg-primary px-4 pt-10 pb-6">
-            <button
-              onClick={() => setShowContacts(false)}
-              className="flex items-center gap-2 text-primary-foreground/80 hover:text-primary-foreground mb-4 transition-colors"
-            >
+        <div className="fixed inset-0 z-50 flex flex-col" style={{ background: "rgba(26,14,18,0.97)", backdropFilter: "blur(30px)" }}>
+          <div className="px-5 pt-12 pb-6">
+            <button onClick={() => setShowContacts(false)} className="flex items-center gap-2 text-white/60 hover:text-white mb-5 transition-colors">
               <ArrowLeft size={18} />
               <span className="text-sm">Zpět</span>
             </button>
-            <h1
-              className="text-primary-foreground"
-              style={{ fontFamily: "'Lora', serif", fontWeight: 400, fontSize: "1.6rem" }}
-            >
+            <h1 style={{ fontFamily: "'Lora', serif", fontWeight: 400, fontSize: "1.7rem", color: "#f5ede8" }}>
               Důležité kontakty
             </h1>
           </div>
-          <div className="flex-1 overflow-y-auto px-4 py-6 space-y-3 max-w-lg mx-auto w-full">
+          <div className="flex-1 overflow-y-auto px-4 py-2 space-y-3 max-w-lg mx-auto w-full pb-10">
             {contacts.map((c) => (
-              <div
-                key={c.role}
-                className="bg-card rounded-2xl p-4 flex items-center justify-between gap-4"
-                style={cardShadow}
-              >
+              <div key={c.role} className="rounded-2xl p-4 flex items-center justify-between gap-4" style={glassStrong}>
                 <div>
-                  <p className="text-xs text-muted-foreground uppercase tracking-wider mb-0.5">{c.role}</p>
+                  <p className="text-xs uppercase tracking-wider mb-0.5" style={{ color: "rgba(196,168,130,0.7)" }}>{c.role}</p>
                   {c.name && (
-                    <p
-                      className="text-foreground mb-0.5"
-                      style={{ fontFamily: "'Lora', serif", fontWeight: 500, fontSize: "1rem" }}
-                    >
-                      {c.name}
-                    </p>
+                    <p className="mb-0.5" style={{ fontFamily: "'Lora', serif", fontWeight: 500, fontSize: "1rem", color: "#f5ede8" }}>{c.name}</p>
                   )}
-                  <a
-                    href={`tel:${c.tel.replace(/\s/g, "")}`}
-                    className="text-sm text-primary tabular-nums hover:text-accent transition-colors"
-                  >
+                  <a href={`tel:${c.tel.replace(/\s/g, "")}`} className="text-sm tabular-nums transition-colors" style={{ color: "#C4A882" }}>
                     {c.tel}
                   </a>
                 </div>
                 <a
                   href={`tel:${c.tel.replace(/\s/g, "")}`}
-                  className="flex-shrink-0 w-10 h-10 rounded-full bg-primary flex items-center justify-center hover:bg-accent transition-colors"
+                  className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-opacity hover:opacity-80"
+                  style={{ background: "rgba(196,168,130,0.2)", border: "1px solid rgba(196,168,130,0.3)" }}
                 >
-                  <Phone size={16} className="text-primary-foreground" />
+                  <Phone size={16} style={{ color: "#C4A882" }} />
                 </a>
               </div>
             ))}
           </div>
         </div>
       )}
+
       {/* Header */}
-      <header className="relative overflow-hidden bg-primary">
-        {/* Barn photo */}
+      <header className="relative z-10 text-center px-6 pt-14 pb-10">
         <img
-          src={headerPhoto}
-          alt=""
-          aria-hidden="true"
-          className="absolute inset-0 w-full h-full object-cover"
+          src={logoKM}
+          alt="Káta & Marek"
+          className="mx-auto mb-5"
+          style={{
+            width: "200px",
+            height: "auto",
+            filter: "brightness(2.5) contrast(1.1) drop-shadow(0 0 12px rgba(255,240,210,0.9)) drop-shadow(0 0 30px rgba(196,168,130,0.8)) drop-shadow(0 0 60px rgba(196,168,130,0.4))",
+          }}
         />
-        {/* Gradient overlay — tmavší dole pro čitelnost, průhledný nahoře */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/50 to-black/70" />
-
-        <div className="relative px-6 pt-12 pb-10 text-center">
-          {/* Logo */}
-          <img
-            src={logoKM}
-            alt="Káta & Marek"
-            className="mx-auto mb-4"
-            style={{
-              width: "220px",
-              height: "auto",
-              filter: "brightness(2.5) contrast(1.1) drop-shadow(0 0 12px rgba(255,240,210,0.9)) drop-shadow(0 0 30px rgba(196,168,130,0.8)) drop-shadow(0 0 60px rgba(196,168,130,0.4))",
-            }}
-          />
-
-          {/* Datum */}
-          <p
-            className="text-white/60 text-xs mb-5"
-            style={{ letterSpacing: "0.28em", textTransform: "uppercase" }}
-          >
-            15. 09. 2026
-          </p>
-
-          {/* Odpočet */}
-          {(() => {
-            const days = Math.ceil((new Date("2026-09-15").getTime() - Date.now()) / 86400000);
-            return (
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/15 bg-white/8 backdrop-blur-sm">
-                <Calendar size={11} className="text-accent" />
-                <span className="text-white/70 text-xs font-light tracking-widest">
-                  {days > 0 ? `${days} dní do svatby` : days === 0 ? "Dnes je ten den! 🎉" : "Právě jsme oddáni ♥"}
-                </span>
-              </div>
-            );
-          })()}
+        <p className="text-xs mb-5" style={{ color: "rgba(245,237,232,0.45)", letterSpacing: "0.28em", textTransform: "uppercase" }}>
+          15. 09. 2026
+        </p>
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full" style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.12)", backdropFilter: "blur(10px)" }}>
+          <Calendar size={11} style={{ color: "#C4A882" }} />
+          <span className="text-xs font-light tracking-widest" style={{ color: "rgba(245,237,232,0.6)" }}>
+            {days > 0 ? `${days} dní do svatby` : days === 0 ? "Dnes je ten den!" : "Právě jsme oddáni ♥"}
+          </span>
         </div>
       </header>
 
-      {/* Tab Nav */}
-      <nav
-        className="sticky top-0 z-20 bg-card"
-        style={{ boxShadow: "0 2px 12px rgba(125, 34, 53, 0.08)" }}
-      >
-        <div className="flex">
+      {/* Tab Nav — floating glass pill */}
+      <div className="sticky top-0 z-20 flex justify-center px-4 pt-3 pb-2">
+        <nav className="flex rounded-full p-1 gap-1" style={{ ...glass, padding: "5px" }}>
           {(["prehled", "program"] as Tab[]).map((tab) => {
-            const labels: Record<Tab, string> = {
-              prehled: "Přehled",
-              program: "Harmonogram",
-            };
+            const labels: Record<Tab, string> = { prehled: "Přehled", program: "Harmonogram" };
+            const active = activeTab === tab;
             return (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`flex-1 py-3.5 text-sm font-medium transition-all relative ${
-                  activeTab === tab
-                    ? "text-primary"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
+                className="px-5 py-2 rounded-full text-sm font-medium transition-all"
+                style={{
+                  background: active ? "rgba(196,168,130,0.25)" : "transparent",
+                  color: active ? "#C4A882" : "rgba(245,237,232,0.5)",
+                  border: active ? "1px solid rgba(196,168,130,0.35)" : "1px solid transparent",
+                }}
               >
                 {labels[tab]}
-                {activeTab === tab && (
-                  <span className="absolute bottom-0 left-1/4 right-1/4 h-0.5 bg-accent rounded-full" />
-                )}
               </button>
             );
           })}
-        </div>
-      </nav>
+        </nav>
+      </div>
 
       {/* Content */}
-      <main className="max-w-lg mx-auto px-4 py-6 space-y-5 pb-16">
+      <main className="relative z-10 max-w-lg mx-auto px-4 py-4 space-y-4 pb-16">
 
         {/* ── PŘEHLED ── */}
         {activeTab === "prehled" && (
           <>
-            {/* Uvítací sekce */}
-            <section className="rounded-2xl overflow-hidden bg-card" style={cardShadow}>
-              {/* Fotka */}
-              <div className="relative h-64">
-                <img
-                  src={couplePhoto}
-                  alt="Kačka a Marek"
-                  className="w-full h-full object-cover object-top"
-                />
-                {/* Gradient dole — plynulý přechod do karty */}
-                <div className="absolute inset-0 bg-gradient-to-t from-card via-card/20 to-transparent" />
-                {/* Jméno přes foto */}
+            {/* Uvítací karta */}
+            <section className="rounded-3xl overflow-hidden" style={glassStrong}>
+              <div className="relative h-60">
+                <img src={couplePhoto} alt="Kačka a Marek" className="w-full h-full object-cover object-top" />
+                <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(26,14,18,0.95) 0%, rgba(26,14,18,0.1) 50%, transparent 100%)" }} />
                 <div className="absolute bottom-0 left-0 right-0 px-5 pb-4 text-center">
                   <div className="flex items-center justify-center gap-3">
-                    <div className="h-px w-8 bg-accent/50" />
-                    <Heart size={10} className="text-accent fill-accent" />
-                    <div className="h-px w-8 bg-accent/50" />
+                    <div className="h-px w-8" style={{ background: "rgba(196,168,130,0.4)" }} />
+                    <Heart size={10} style={{ color: "#C4A882", fill: "#C4A882" }} />
+                    <div className="h-px w-8" style={{ background: "rgba(196,168,130,0.4)" }} />
                   </div>
                 </div>
               </div>
-
-              {/* Text */}
-              <div className="px-5 pt-2 pb-5">
-                <h2
-                  className="text-foreground mb-2 text-center"
-                  style={{ fontFamily: "'Lora', serif", fontWeight: 500, letterSpacing: "0.18em", fontSize: "0.7rem", textTransform: "uppercase" }}
-                >
-                  Vítejte
-                </h2>
-                <p
-                  className="text-foreground mb-3 leading-snug text-center"
-                  style={{ fontFamily: "'Lora', serif", fontStyle: "italic", fontSize: "1.1rem", fontWeight: 400 }}
-                >
+              <div className="px-5 pt-3 pb-6 text-center">
+                <p className="mb-2 uppercase tracking-widest text-xs" style={{ color: "rgba(196,168,130,0.7)", letterSpacing: "0.2em" }}>Vítejte</p>
+                <p className="mb-3 leading-snug" style={{ fontFamily: "'Lora', serif", fontStyle: "italic", fontSize: "1.1rem", color: "#f5ede8" }}>
                   Dnes společně otevíráme novou kapitolu našeho příběhu.
                 </p>
-                <p className="text-muted-foreground text-sm leading-relaxed text-center">
+                <p className="text-sm leading-relaxed" style={{ color: "rgba(245,237,232,0.55)" }}>
                   Máme radost, že právě vy jste součástí tohoto výjimečného dne a můžete ho prožít spolu s námi. Připravili jsme pro vás několik důležitých informací, aby pro vás byl tento den co nejpříjemnější, cítili jste se vítaní a mohli si naplno užít každý okamžik.
                 </p>
               </div>
             </section>
 
-
-            {/* KDY a KDE */}
+            {/* Kdy a kde */}
             <section>
-              <h3
-                className="text-foreground mb-3"
-                style={{ fontFamily: "'Lora', serif", fontWeight: 500, fontSize: "1.1rem" }}
-              >
-                Kdy a kde
-              </h3>
-              <div
-                className="rounded-2xl overflow-hidden bg-card"
-                style={cardShadow}
-              >
-                {/* Foto */}
-                <div className="relative h-44 bg-muted">
-                  <img
-                    src={barnNightPhoto}
-                    alt="Stodola Borohrádek — svatební sál"
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent" />
+              <p className="text-xs uppercase tracking-widest mb-3 px-1" style={{ color: "rgba(196,168,130,0.6)", letterSpacing: "0.18em" }}>Kdy a kde</p>
+              <div className="rounded-3xl overflow-hidden" style={glassStrong}>
+                <div className="relative h-44">
+                  <img src={barnNightPhoto} alt="Stodola Borohrádek" className="w-full h-full object-cover" />
+                  <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(26,14,18,0.8) 0%, transparent 60%)" }} />
                   <div className="absolute bottom-0 left-0 p-3">
-                    <span
-                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/92 text-xs font-medium text-foreground"
-                      style={{ boxShadow: "0 1px 6px rgba(0,0,0,0.12)" }}
-                    >
-                      <MapPin size={11} className="text-accent" />
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium" style={{ background: "rgba(255,255,255,0.15)", backdropFilter: "blur(10px)", border: "1px solid rgba(255,255,255,0.2)", color: "#f5ede8" }}>
+                      <MapPin size={11} style={{ color: "#C4A882" }} />
                       Borohrádek
                     </span>
                   </div>
                 </div>
 
-                {/* Název místa */}
-                <div className="px-4 pt-4 pb-3 border-b border-border/40">
-                  <h2
-                    className="text-foreground mb-0.5"
-                    style={{ fontFamily: "'Lora', serif", fontWeight: 500, fontSize: "1.15rem" }}
-                  >
-                    Stodola Borohrádek
-                  </h2>
-                  <p className="text-muted-foreground text-sm mb-3">
-                    Husova 225, 517 24 Borohrádek · Královéhradecký kraj
-                  </p>
+                <div className="px-4 pt-4 pb-3" style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
+                  <h2 className="mb-0.5" style={{ fontFamily: "'Lora', serif", fontWeight: 500, fontSize: "1.15rem", color: "#f5ede8" }}>Stodola Borohrádek</h2>
+                  <p className="text-sm mb-3" style={{ color: "rgba(245,237,232,0.5)" }}>Husova 225, 517 24 Borohrádek · Královéhradecký kraj</p>
                   <a
                     href="https://www.google.com/maps/place/Stodola+Borohr%C3%A1dek/@50.0963618,16.0760467,17z/data=!3m1!4b1!4m6!3m5!1s0x470ddb4fc8d70855:0x6786c639ae2150b!8m2!3d50.0963618!4d16.078627!16s%2Fg%2F11s69szkw7?entry=ttu&g_ep=EgoyMDI2MDYxMC4wIKXMDSoASAFQAw%3D%3D"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 text-sm text-primary font-medium hover:text-accent transition-colors"
+                    target="_blank" rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-sm font-medium transition-opacity hover:opacity-70"
+                    style={{ color: "#C4A882" }}
                   >
-                    Zobrazit na mapě
-                    <ChevronRight size={14} />
+                    Zobrazit na mapě <ChevronRight size={14} />
                   </a>
                 </div>
 
-                {/* Datum + čas vedle sebe */}
-                <div className="grid grid-cols-2 divide-x divide-border/40">
-                  <div className="px-4 py-3 flex items-center gap-3">
-                    <Calendar size={18} className="text-accent flex-shrink-0" />
+                <div className="grid grid-cols-2" style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
+                  <div className="px-4 py-3 flex items-center gap-3" style={{ borderRight: "1px solid rgba(255,255,255,0.08)" }}>
+                    <Calendar size={18} style={{ color: "#C4A882", flexShrink: 0 }} />
                     <div>
-                      <p className="text-xs text-muted-foreground uppercase tracking-wider mb-0.5">Datum</p>
-                      <p className="text-sm font-medium text-foreground">15. září 2026</p>
+                      <p className="text-xs uppercase tracking-wider mb-0.5" style={{ color: "rgba(245,237,232,0.4)" }}>Datum</p>
+                      <p className="text-sm font-medium" style={{ color: "#f5ede8" }}>15. září 2026</p>
                     </div>
                   </div>
                   <div className="px-4 py-3 flex items-center gap-3">
-                    <Clock size={18} className="text-accent flex-shrink-0" />
+                    <Clock size={18} style={{ color: "#C4A882", flexShrink: 0 }} />
                     <div>
-                      <p className="text-xs text-muted-foreground uppercase tracking-wider mb-0.5">Začátek</p>
-                      <p className="text-sm font-medium text-foreground">12:00 hod.</p>
+                      <p className="text-xs uppercase tracking-wider mb-0.5" style={{ color: "rgba(245,237,232,0.4)" }}>Začátek</p>
+                      <p className="text-sm font-medium" style={{ color: "#f5ede8" }}>12:00 hod.</p>
                     </div>
                   </div>
                 </div>
-                {/* Přidat do kalendáře */}
-                <div className="border-t border-border/40">
-                  <a
-                    href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Svatba+M%C3%A1ra+%26+Ka%C4%8Dka&dates=20260915T100000Z%2F20260915T210000Z&location=Stodola+Borohr%C3%A1dek%2C+Husova+225%2C+517+24+Borohr%C3%A1dek&details=Svatba+M%C3%A1ra+%26+Ka%C4%8Dky"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 px-4 py-3 hover:bg-muted/30 transition-colors"
+
+                <div className="relative">
+                  <button
+                    onClick={() => setShowCalPicker(!showCalPicker)}
+                    className="w-full flex items-center justify-center gap-2 px-4 py-3 transition-opacity hover:opacity-70"
                   >
-                    <Calendar size={14} className="text-accent" />
-                    <span className="text-sm font-medium text-primary">Přidat do kalendáře</span>
-                    <ChevronRight size={13} className="text-primary" />
-                  </a>
+                    <Calendar size={14} style={{ color: "#C4A882" }} />
+                    <span className="text-sm font-medium" style={{ color: "#C4A882" }}>Přidat do kalendáře</span>
+                    <ChevronDown size={13} style={{ color: "#C4A882", transform: showCalPicker ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s" }} />
+                  </button>
+                  {showCalPicker && (
+                    <div className="mx-3 mb-3 rounded-2xl overflow-hidden" style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)" }}>
+                      <a
+                        href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Svatba+M%C3%A1ra+%26+Ka%C4%8Dka&dates=20260915T100000Z%2F20260915T210000Z&location=Stodola+Borohr%C3%A1dek%2C+Husova+225%2C+517+24+Borohr%C3%A1dek&details=Svatba+M%C3%A1ra+%26+Ka%C4%8Dky"
+                        target="_blank" rel="noopener noreferrer"
+                        onClick={() => setShowCalPicker(false)}
+                        className="flex items-center gap-3 px-4 py-3 transition-opacity hover:opacity-70"
+                        style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}
+                      >
+                        <span className="text-lg">📅</span>
+                        <span className="text-sm font-medium" style={{ color: "#f5ede8" }}>Google Kalendář</span>
+                      </a>
+                      <button
+                        onClick={downloadICS}
+                        className="w-full flex items-center gap-3 px-4 py-3 transition-opacity hover:opacity-70"
+                      >
+                        <span className="text-lg">🍎</span>
+                        <span className="text-sm font-medium" style={{ color: "#f5ede8" }}>Apple Kalendář (.ics)</span>
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             </section>
 
-            {/* Dress code karta */}
-            <section className="bg-card rounded-2xl p-5" style={cardShadow}>
+            {/* Dress code */}
+            <section className="rounded-3xl p-5" style={glass}>
               <div className="flex items-center gap-2 mb-3">
-                <Shirt size={20} className="text-accent" />
+                <Shirt size={20} style={{ color: "#C4A882" }} />
               </div>
-              <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Dress code</p>
-              <h3
-                className="text-foreground mb-1"
-                style={{ fontFamily: "'Lora', serif", fontWeight: 500, fontSize: "1.1rem" }}
-              >
+              <p className="text-xs uppercase tracking-wider mb-1" style={{ color: "rgba(196,168,130,0.6)" }}>Dress code</p>
+              <h3 className="mb-1" style={{ fontFamily: "'Lora', serif", fontWeight: 500, fontSize: "1.1rem", color: "#f5ede8" }}>
                 Formální & semi-formální
               </h3>
-              <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+              <p className="text-sm leading-relaxed mb-4" style={{ color: "rgba(245,237,232,0.55)" }}>
                 Prosíme hosty o elegantní oblečení. Bílá je rezervována pro nevěstu, černá pro ženicha.
               </p>
-
-              {/* Barevná paleta */}
-              <p className="text-xs text-muted-foreground uppercase tracking-wider mb-3">Inspirace barvami</p>
+              <p className="text-xs uppercase tracking-wider mb-3" style={{ color: "rgba(196,168,130,0.5)" }}>Inspirace barvami</p>
               <div className="flex items-center gap-3 flex-wrap">
                 {[
                   { hex: "#6B3A3A", name: "Ganache" },
@@ -356,70 +315,50 @@ export default function App() {
                   { hex: "#F0E6D0", name: "Champagne" },
                 ].map((c) => (
                   <div key={c.hex} className="flex flex-col items-center gap-1.5">
-                    <div
-                      className="w-10 h-10 rounded-full"
-                      style={{
-                        backgroundColor: c.hex,
-                        boxShadow: "0 2px 8px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.15)",
-                        border: c.hex === "#F5F0E8" || c.hex === "#F0E6D0" ? "1px solid rgba(107,58,58,0.15)" : "none",
-                      }}
-                    />
-                    <span className="text-xs text-muted-foreground">{c.name}</span>
+                    <div className="w-10 h-10 rounded-full" style={{ backgroundColor: c.hex, boxShadow: `0 2px 12px ${c.hex}66, inset 0 1px 0 rgba(255,255,255,0.2)`, border: "1px solid rgba(255,255,255,0.12)" }} />
+                    <span className="text-xs" style={{ color: "rgba(245,237,232,0.45)" }}>{c.name}</span>
                   </div>
                 ))}
               </div>
             </section>
 
-            {/* Key Info Cards */}
+            {/* Info karty */}
             <div className="grid grid-cols-2 gap-3">
-              <div className="bg-card rounded-xl p-4" style={cardShadow}>
-                <Utensils size={20} className="text-accent mb-2" />
-                <p className="text-xs text-muted-foreground mb-0.5 uppercase tracking-wider">Pohoštění</p>
-                <p className="text-sm font-medium text-foreground">Formou rautu</p>
+              <div className="rounded-2xl p-4" style={glass}>
+                <Utensils size={20} className="mb-2" style={{ color: "#C4A882" }} />
+                <p className="text-xs uppercase tracking-wider mb-0.5" style={{ color: "rgba(245,237,232,0.4)" }}>Pohoštění</p>
+                <p className="text-sm font-medium" style={{ color: "#f5ede8" }}>Formou rautu</p>
               </div>
-              <div
-                className="bg-card rounded-xl p-4 cursor-pointer hover:opacity-90 transition-opacity"
-                style={cardShadow}
-                onClick={() => setShowContacts(true)}
-              >
-                <Phone size={20} className="text-accent mb-2" />
-                <p className="text-xs text-muted-foreground mb-0.5 uppercase tracking-wider">Důležité kontakty</p>
-                <p className="text-sm font-medium text-primary flex items-center gap-1">
+              <div className="rounded-2xl p-4 cursor-pointer transition-opacity hover:opacity-80" style={glass} onClick={() => setShowContacts(true)}>
+                <Phone size={20} className="mb-2" style={{ color: "#C4A882" }} />
+                <p className="text-xs uppercase tracking-wider mb-0.5" style={{ color: "rgba(245,237,232,0.4)" }}>Důležité kontakty</p>
+                <p className="text-sm font-medium flex items-center gap-1" style={{ color: "#C4A882" }}>
                   Zobrazit <ChevronRight size={13} />
                 </p>
               </div>
             </div>
 
-            {/* FAQ sekce */}
+            {/* FAQ */}
             <section>
-              <h3
-                className="text-foreground mb-3"
-                style={{ fontFamily: "'Lora', serif", fontWeight: 500, fontSize: "1.1rem" }}
-              >
-                Časté dotazy
-              </h3>
+              <p className="text-xs uppercase tracking-widest mb-3 px-1" style={{ color: "rgba(196,168,130,0.6)", letterSpacing: "0.18em" }}>Časté dotazy</p>
               <div className="space-y-2">
                 {faqs.map((faq, i) => (
-                  <div
-                    key={i}
-                    className="bg-card rounded-xl overflow-hidden"
-                    style={cardShadow}
-                  >
+                  <div key={i} className="rounded-2xl overflow-hidden" style={glass}>
                     <button
                       onClick={() => setOpenFaq(openFaq === i ? null : i)}
                       className="w-full flex items-center justify-between px-4 py-3.5 text-left gap-3"
                     >
-                      <span className="text-sm font-medium text-foreground">{faq.q}</span>
+                      <span className="text-sm font-medium" style={{ color: "#f5ede8" }}>{faq.q}</span>
                       <ChevronDown
                         size={16}
-                        className="text-accent flex-shrink-0 transition-transform duration-200"
-                        style={{ transform: openFaq === i ? "rotate(180deg)" : "rotate(0deg)" }}
+                        className="flex-shrink-0 transition-transform duration-200"
+                        style={{ color: "#C4A882", transform: openFaq === i ? "rotate(180deg)" : "rotate(0deg)" }}
                       />
                     </button>
                     {openFaq === i && (
                       <div className="px-4 pb-4">
-                        <div className="h-px bg-border/50 mb-3" />
-                        <p className="text-sm text-muted-foreground leading-relaxed">{faq.a}</p>
+                        <div className="h-px mb-3" style={{ background: "rgba(255,255,255,0.08)" }} />
+                        <p className="text-sm leading-relaxed" style={{ color: "rgba(245,237,232,0.55)" }}>{faq.a}</p>
                       </div>
                     )}
                   </div>
@@ -429,38 +368,25 @@ export default function App() {
           </>
         )}
 
-        {/* ── PROGRAM ── */}
+        {/* ── HARMONOGRAM ── */}
         {activeTab === "program" && (
           <section>
-            <h2
-              className="text-foreground mb-5"
-              style={{ fontFamily: "'Lora', serif", fontWeight: 500, fontSize: "1.3rem" }}
-            >
-              Harmonogram dne
-            </h2>
+            <p className="text-xs uppercase tracking-widest mb-5 px-1" style={{ color: "rgba(196,168,130,0.6)", letterSpacing: "0.18em" }}>Harmonogram dne</p>
             <div className="relative">
-              <div className="absolute left-[3.3rem] top-5 bottom-5 w-px bg-primary/10" />
+              <div className="absolute left-[3.3rem] top-5 bottom-5 w-px" style={{ background: "rgba(196,168,130,0.15)" }} />
               <div className="space-y-2">
                 {schedule.map((item, i) => {
                   const Icon = item.icon;
                   return (
                     <div key={i} className="flex items-center gap-3 py-1">
                       <div className="w-12 flex-shrink-0 text-right">
-                        <span className="text-xs font-medium text-muted-foreground tabular-nums">
-                          {item.time}
-                        </span>
+                        <span className="text-xs font-medium tabular-nums" style={{ color: "rgba(245,237,232,0.45)" }}>{item.time}</span>
                       </div>
-                      <div
-                        className="relative z-10 w-7 h-7 rounded-full bg-card flex items-center justify-center flex-shrink-0"
-                        style={{ boxShadow: "0 0 0 2px rgba(196,168,130,0.35), 0 2px 8px rgba(107,58,58,0.1)" }}
-                      >
-                        <Icon size={13} className="text-accent" />
+                      <div className="relative z-10 w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "rgba(196,168,130,0.15)", border: "1px solid rgba(196,168,130,0.3)", backdropFilter: "blur(10px)" }}>
+                        <Icon size={13} style={{ color: "#C4A882" }} />
                       </div>
-                      <div
-                        className="flex-1 bg-card rounded-xl px-4 py-3"
-                        style={cardShadow}
-                      >
-                        <p className="text-sm font-medium text-foreground">{item.event}</p>
+                      <div className="flex-1 rounded-xl px-4 py-3" style={glass}>
+                        <p className="text-sm font-medium" style={{ color: "#f5ede8" }}>{item.event}</p>
                       </div>
                     </div>
                   );
@@ -469,17 +395,16 @@ export default function App() {
             </div>
           </section>
         )}
-
       </main>
 
       {/* Footer */}
-      <footer className="text-center py-6 px-4">
-        <div className="flex items-center justify-center gap-2 mb-1">
-          <div className="h-px w-6 bg-accent/30" />
-          <Heart size={9} className="text-accent fill-accent" />
-          <div className="h-px w-6 bg-accent/30" />
+      <footer className="relative z-10 text-center py-6 px-4">
+        <div className="flex items-center justify-center gap-3 mb-2">
+          <div className="h-px w-6" style={{ background: "rgba(196,168,130,0.25)" }} />
+          <Heart size={9} style={{ color: "#C4A882", fill: "#C4A882" }} />
+          <div className="h-px w-6" style={{ background: "rgba(196,168,130,0.25)" }} />
         </div>
-        <p className="text-xs text-muted-foreground" style={{ fontStyle: "italic" }}>
+        <p className="text-xs" style={{ fontStyle: "italic", color: "rgba(245,237,232,0.35)" }}>
           Děkujeme, že budete u toho!
         </p>
       </footer>

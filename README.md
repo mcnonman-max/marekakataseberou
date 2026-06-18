@@ -1,7 +1,7 @@
 
-  # Wedding app
+  # Svatba Marka a Káti
 
-  This is a code bundle for Wedding app. The original project is available at https://www.figma.com/design/aaHCp4zmthizqJe8bSNnim/Wedding-app.
+  This is a code bundle for Svatba Marka a Káti. The original project is available at https://www.figma.com/design/aaHCp4zmthizqJe8bSNnim/Svatba-Marka-a-K%C3%A1ti.
 
   ## Running the code
 
