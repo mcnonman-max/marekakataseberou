@@ -57,6 +57,14 @@ export default function App() {
     document.title = "Svatba Mára & Kačka";
   }, []);
 
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 60);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   const [activeTab, setActiveTab] = useState<Tab>("prehled");
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [showContacts, setShowContacts] = useState(false);
@@ -160,9 +168,31 @@ export default function App() {
         </div>
       </header>
 
-      {/* Tab Nav — floating glass pill */}
-      <div className="sticky top-0 z-20 flex justify-center px-4 pt-3 pb-2">
-        <nav className="flex rounded-full p-1 gap-1" style={{ ...glass, padding: "5px" }}>
+      {/* Scroll header — zobrazí se až při scrollu */}
+      <header
+        className="fixed top-0 left-0 right-0 z-30 flex items-center justify-between px-4 py-2 transition-all duration-300"
+        style={{
+          background: scrolled ? "rgba(26,14,18,0.75)" : "transparent",
+          backdropFilter: scrolled ? "blur(24px)" : "blur(0px)",
+          WebkitBackdropFilter: scrolled ? "blur(24px)" : "blur(0px)",
+          borderBottom: scrolled ? "1px solid rgba(255,255,255,0.08)" : "1px solid transparent",
+          boxShadow: scrolled ? "0 2px 20px rgba(26,14,18,0.25)" : "none",
+          pointerEvents: scrolled ? "auto" : "none",
+          opacity: scrolled ? 1 : 0,
+        }}
+      >
+        {/* Logo */}
+        <img
+          src={logoKM}
+          alt="Káta & Marek"
+          style={{
+            height: "36px",
+            width: "auto",
+            filter: "brightness(2.5) contrast(1.1) drop-shadow(0 0 8px rgba(196,168,130,0.6))",
+          }}
+        />
+        {/* Přepínač */}
+        <nav className="flex rounded-full gap-0.5" style={{ background: "rgba(255,255,255,0.1)", padding: "3px", border: "1px solid rgba(255,255,255,0.15)" }}>
           {(["prehled", "program"] as Tab[]).map((tab) => {
             const labels: Record<Tab, string> = { prehled: "Přehled", program: "Harmonogram" };
             const active = activeTab === tab;
@@ -170,11 +200,11 @@ export default function App() {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className="px-5 py-2 rounded-full text-sm font-medium transition-all"
+                className="px-4 py-1.5 rounded-full text-xs font-medium transition-all"
                 style={{
-                  background: active ? "rgba(196,168,130,0.25)" : "transparent",
-                  color: active ? "#C4A882" : "rgba(245,237,232,0.5)",
-                  border: active ? "1px solid rgba(196,168,130,0.35)" : "1px solid transparent",
+                  background: active ? "rgba(196,168,130,0.3)" : "transparent",
+                  color: active ? "#C4A882" : "rgba(255,255,255,0.45)",
+                  border: active ? "1px solid rgba(196,168,130,0.4)" : "1px solid transparent",
                 }}
               >
                 {labels[tab]}
@@ -182,6 +212,33 @@ export default function App() {
             );
           })}
         </nav>
+      </header>
+
+      {/* Přepínač nad obsahem */}
+      <div className="relative z-10 flex justify-center px-4 pt-2 pb-1">
+        <div className="flex rounded-full p-1 relative" style={{ background: "rgba(46,20,20,0.45)", border: "1px solid rgba(255,255,255,0.1)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}>
+          {(["prehled", "program"] as Tab[]).map((tab) => {
+            const labels: Record<Tab, string> = { prehled: "Přehled", program: "Harmonogram" };
+            const active = activeTab === tab;
+            return (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className="relative px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 z-10"
+                style={{
+                  background: active ? "rgba(255,255,255,0.22)" : "transparent",
+                  color: active ? "#ffffff" : "rgba(255,255,255,0.55)",
+                  boxShadow: active ? "0 2px 16px rgba(255,255,255,0.1), inset 0 1px 0 rgba(255,255,255,0.35)" : "none",
+                  backdropFilter: active ? "blur(16px)" : "none",
+                  WebkitBackdropFilter: active ? "blur(16px)" : "none",
+                  border: active ? "1px solid rgba(255,255,255,0.3)" : "1px solid transparent",
+                }}
+              >
+                {labels[tab]}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Content */}
