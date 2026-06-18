@@ -50,11 +50,58 @@ const glassStrong = {
 
 export default function App() {
   useEffect(() => {
-    const link = document.querySelector("link[rel~='icon']") as HTMLLinkElement || document.createElement("link");
-    link.rel = "icon";
-    link.href = logoKM;
-    document.head.appendChild(link);
     document.title = "Svatba Mára & Kačka";
+
+    const img = new Image();
+    img.src = logoKM;
+    img.onload = () => {
+      // Vygeneruj ikonu na canvas — černé pozadí + logo
+      const generate = (size: number) => {
+        const canvas = document.createElement("canvas");
+        canvas.width = size;
+        canvas.height = size;
+        const ctx = canvas.getContext("2d")!;
+        // Černé pozadí
+        ctx.fillStyle = "#000000";
+        ctx.beginPath();
+        ctx.roundRect(0, 0, size, size, size * 0.2);
+        ctx.fill();
+        // Logo centrované s paddingem
+        const pad = size * 0.12;
+        ctx.drawImage(img, pad, pad, size - pad * 2, size - pad * 2);
+        return canvas.toDataURL("image/png");
+      };
+
+      const icon192 = generate(192);
+      const icon512 = generate(512);
+
+      // Favicon
+      const favicon = document.querySelector("link[rel~='icon']") as HTMLLinkElement || Object.assign(document.createElement("link"), { rel: "icon" });
+      favicon.href = icon192;
+      document.head.appendChild(favicon);
+
+      // Apple touch icon
+      const apple = Object.assign(document.createElement("link"), { rel: "apple-touch-icon", href: icon192 });
+      document.head.appendChild(apple);
+
+      // PWA Manifest
+      const manifest = {
+        name: "Svatba Mára & Kačka",
+        short_name: "Svatba M&K",
+        start_url: "/",
+        display: "standalone",
+        background_color: "#000000",
+        theme_color: "#1a0e12",
+        icons: [
+          { src: icon192, sizes: "192x192", type: "image/png" },
+          { src: icon512, sizes: "512x512", type: "image/png", purpose: "any maskable" },
+        ],
+      };
+      const blob = new Blob([JSON.stringify(manifest)], { type: "application/json" });
+      const manifestUrl = URL.createObjectURL(blob);
+      const manifestLink = Object.assign(document.createElement("link"), { rel: "manifest", href: manifestUrl });
+      document.head.appendChild(manifestLink);
+    };
   }, []);
 
   const [scrolled, setScrolled] = useState(false);
