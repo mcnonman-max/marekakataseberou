@@ -24,8 +24,8 @@ const faqs = [
 ];
 
 const contacts = [
-  { role: "Ženich", name: "Marek Čehovský", tel: "721 573 785" },
-  { role: "Nevěsta", name: "Kateřina Karpíšková", tel: "345 543 345" },
+  { role: "Ženich", name: "Marek Čehovský", tel: "+420 721 573 785" },
+  { role: "Nevěsta", name: "Kateřina Karpíšková", tel: "+420 608 916 651" },
   { role: "Koordinátorka", name: "", tel: "876 543 543" },
 ];
 
