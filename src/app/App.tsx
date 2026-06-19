@@ -16,7 +16,7 @@ const schedule = [
 ];
 
 const faqs = [
-  { q: "Kde se mohu ubytovat?", a: "Doporučujeme Pension Borohrádek (2 km) nebo Hotel Orlice v Týništi nad Orlicí (8 km). Rezervujte prosím s dostatečným předstihem. Ahoj Testuji code" },
+  { q: "Kde se mohu ubytovat?", a: "Doporučujeme Pension Borohrádek (2 km) nebo Hotel Orlice v Týništi nad Orlicí (8 km). Rezervujte prosím s dostatečným předstihem." },
   { q: "Je na místě parkování?", a: "Ano, přímo u areálu Stodoly Borohrádek je parkoviště s kapacitou cca 80 míst. Někam to narveme :-)" },
   { q: "Mohu přivést děti?", a: "S cílem umožnit všem hostům, včetně rodičů, relaxační večer, rozhodli jsme uspořádat náš svatební den pouze pro dospělé. Doufáme, že toto předběžné oznámení nebude překážkou a i nadále se k nám připojíte oslavit tento jedinečný den. V případě dotazů nás určitě neváhejte kontaktovat." },
   { q: "Svatební dary?", a: "Střechu nad hlavou už máme, ale to nejkrásnější teprve začíná. Místo tradičních darů nám můžete přispět na společné zážitky, cesty a sny, které nás čekají." },
@@ -55,13 +55,13 @@ export default function App() {
     const img = new Image();
     img.src = logoKM;
     img.onload = () => {
-      // Standardní ikona — černé pozadí + logo (pro iOS a Android any)
+      // Standardní ikona — tmavé pozadí appky + logo (pro iOS a Android any)
       const generateStandard = (size: number, radius: number, pad: number) => {
         const canvas = document.createElement("canvas");
         canvas.width = size;
         canvas.height = size;
         const ctx = canvas.getContext("2d")!;
-        ctx.fillStyle = "#000000";
+        ctx.fillStyle = "#1a0e12";
         ctx.beginPath();
         ctx.roundRect(0, 0, size, size, radius);
         ctx.fill();
@@ -75,7 +75,7 @@ export default function App() {
         canvas.width = size;
         canvas.height = size;
         const ctx = canvas.getContext("2d")!;
-        ctx.fillStyle = "#000000";
+        ctx.fillStyle = "#1a0e12";
         ctx.fillRect(0, 0, size, size);
         // Bezpečná zóna = vnitřních 80% → padding = 10%
         const pad = size * 0.18;
@@ -137,7 +137,7 @@ export default function App() {
         short_name: "Svatba M&K",
         start_url: "/",
         display: "standalone",
-        background_color: "#000000",
+        background_color: "#1a0e12",
         theme_color: "#1a0e12",
         icons: [
           { src: icon192, sizes: "192x192", type: "image/png", purpose: "any" },
@@ -318,11 +318,14 @@ export default function App() {
       </div>
 
       {/* Content */}
-      <main className="relative z-10 max-w-lg mx-auto px-4 py-4 space-y-4 pb-16">
+      <main className="relative z-10 max-w-lg md:max-w-4xl mx-auto px-4 py-4 space-y-4 pb-16">
 
         {/* ── PŘEHLED ── */}
         {activeTab === "prehled" && (
           <>
+            <div className="md:grid md:grid-cols-2 md:gap-4 space-y-4 md:space-y-0">
+              {/* Levý sloupec: Uvítací karta */}
+              <div>
             {/* Uvítací karta */}
             <section className="rounded-3xl overflow-hidden" style={glassStrong}>
               <div className="relative h-60">
@@ -346,14 +349,20 @@ export default function App() {
                 </p>
               </div>
             </section>
+              </div>{/* end left col */}
 
+              {/* Pravý sloupec: Kdy a kde */}
+              <div className="md:flex md:flex-col md:h-full">
             {/* Kdy a kde */}
-            <section>
-              <p className="text-xs uppercase tracking-widest mb-3 px-1" style={{ color: "rgba(196,168,130,0.6)", letterSpacing: "0.18em" }}>Kdy a kde</p>
-              <div className="rounded-3xl overflow-hidden" style={glassStrong}>
-                <div className="relative h-44">
-                  <img src={barnNightPhoto} alt="Stodola Borohrádek" className="w-full h-full object-cover" />
+            <section className="md:flex md:flex-col md:flex-1">
+              <div className="rounded-3xl overflow-hidden md:flex md:flex-col md:h-full" style={glassStrong}>
+                <div className="relative md:flex-1" style={{ minHeight: "11rem" }}>
+                  <img src={barnNightPhoto} alt="Stodola Borohrádek" className="w-full h-full object-cover absolute inset-0" />
                   <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(26,14,18,0.8) 0%, transparent 60%)" }} />
+                  <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(26,14,18,0.92) 0%, transparent 50%)" }} />
+                  <div className="absolute top-0 left-0 p-4">
+                    <p className="text-base uppercase tracking-widest font-bold" style={{ color: "#ffffff", letterSpacing: "0.18em", textShadow: "0 1px 8px rgba(0,0,0,0.6)", fontSize: "0.875rem" }}>Kdy a kde</p>
+                  </div>
                   <div className="absolute bottom-0 left-0 p-3">
                     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium" style={{ background: "rgba(255,255,255,0.15)", backdropFilter: "blur(10px)", border: "1px solid rgba(255,255,255,0.2)", color: "#f5ede8" }}>
                       <MapPin size={11} style={{ color: "#C4A882" }} />
@@ -425,6 +434,8 @@ export default function App() {
                 </div>
               </div>
             </section>
+              </div>{/* end right col */}
+            </div>{/* end top 2-col grid */}
 
             {/* Dress code */}
             <section className="rounded-3xl p-5" style={glass}>
@@ -473,7 +484,7 @@ export default function App() {
 
             {/* FAQ */}
             <section>
-              <p className="text-xs uppercase tracking-widest mb-3 px-1" style={{ color: "rgba(196,168,130,0.6)", letterSpacing: "0.18em" }}>Časté dotazy</p>
+              <p className="text-xs uppercase tracking-widest mb-3 px-1" style={{ color: "#ffffff", letterSpacing: "0.18em" }}>Časté dotazy</p>
               <div className="space-y-2">
                 {faqs.map((faq, i) => (
                   <div key={i} className="rounded-2xl overflow-hidden" style={glass}>
@@ -504,7 +515,7 @@ export default function App() {
         {/* ── HARMONOGRAM ── */}
         {activeTab === "program" && (
           <section>
-            <p className="text-xs uppercase tracking-widest mb-5 px-1" style={{ color: "rgba(196,168,130,0.6)", letterSpacing: "0.18em" }}>Harmonogram dne</p>
+            <p className="text-xs uppercase tracking-widest mb-5 px-1" style={{ color: "#ffffff", letterSpacing: "0.18em" }}>Harmonogram dne</p>
             <div className="relative">
               <div className="absolute left-[3.3rem] top-5 bottom-5 w-px" style={{ background: "rgba(196,168,130,0.15)" }} />
               <div className="space-y-2">
@@ -513,7 +524,7 @@ export default function App() {
                   return (
                     <div key={i} className="flex items-center gap-3 py-1">
                       <div className="w-12 flex-shrink-0 text-right">
-                        <span className="text-xs font-medium tabular-nums" style={{ color: "rgba(245,237,232,0.45)" }}>{item.time}</span>
+                        <span className="text-xs font-medium tabular-nums" style={{ color: "#ffffff" }}>{item.time}</span>
                       </div>
                       <div className="relative z-10 w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "rgba(196,168,130,0.15)", border: "1px solid rgba(196,168,130,0.3)", backdropFilter: "blur(10px)" }}>
                         <Icon size={13} style={{ color: "#C4A882" }} />
