@@ -16,7 +16,7 @@ const schedule = [
 ];
 
 const faqs = [
-  { q: "Kde se mohu ubytovat?", a: "Doporučujeme Pension Borohrádek (2 km) nebo Hotel Orlice v Týništi nad Orlicí (8 km). Rezervujte prosím s dostatečným předstihem." },
+  { q: "Kde se mohu ubytovat?", a: "Doporučujeme Pension Borohrádek (2 km) nebo Hotel Orlice v Týništi nad Orlicí (8 km). Rezervujte prosím s dostatečným předstihem. Ahoj Testuji code" },
   { q: "Je na místě parkování?", a: "Ano, přímo u areálu Stodoly Borohrádek je parkoviště s kapacitou cca 80 míst. Někam to narveme :-)" },
   { q: "Mohu přivést děti?", a: "S cílem umožnit všem hostům, včetně rodičů, relaxační večer, rozhodli jsme uspořádat náš svatební den pouze pro dospělé. Doufáme, že toto předběžné oznámení nebude překážkou a i nadále se k nám připojíte oslavit tento jedinečný den. V případě dotazů nás určitě neváhejte kontaktovat." },
   { q: "Svatební dary?", a: "Střechu nad hlavou už máme, ale to nejkrásnější teprve začíná. Místo tradičních darů nám můžete přispět na společné zážitky, cesty a sny, které nás čekají." },
@@ -55,36 +55,83 @@ export default function App() {
     const img = new Image();
     img.src = logoKM;
     img.onload = () => {
-      // Vygeneruj ikonu na canvas — černé pozadí + logo
-      const generate = (size: number) => {
+      // Standardní ikona — černé pozadí + logo (pro iOS a Android any)
+      const generateStandard = (size: number, radius: number, pad: number) => {
         const canvas = document.createElement("canvas");
         canvas.width = size;
         canvas.height = size;
         const ctx = canvas.getContext("2d")!;
-        // Černé pozadí
         ctx.fillStyle = "#000000";
         ctx.beginPath();
-        ctx.roundRect(0, 0, size, size, size * 0.2);
+        ctx.roundRect(0, 0, size, size, radius);
         ctx.fill();
-        // Logo centrované s paddingem
-        const pad = size * 0.12;
         ctx.drawImage(img, pad, pad, size - pad * 2, size - pad * 2);
         return canvas.toDataURL("image/png");
       };
 
-      const icon192 = generate(192);
-      const icon512 = generate(512);
+      // Maskable ikona pro Android — bez zaoblení, logo v bezpečné zóně (80%)
+      const generateMaskable = (size: number) => {
+        const canvas = document.createElement("canvas");
+        canvas.width = size;
+        canvas.height = size;
+        const ctx = canvas.getContext("2d")!;
+        ctx.fillStyle = "#000000";
+        ctx.fillRect(0, 0, size, size);
+        // Bezpečná zóna = vnitřních 80% → padding = 10%
+        const pad = size * 0.18;
+        ctx.drawImage(img, pad, pad, size - pad * 2, size - pad * 2);
+        return canvas.toDataURL("image/png");
+      };
+
+      // iOS velikosti
+      const icon120 = generateStandard(120, 26, 14);
+      const icon152 = generateStandard(152, 32, 18);
+      const icon167 = generateStandard(167, 36, 20);
+      const icon180 = generateStandard(180, 38, 22);
+
+      // Android velikosti
+      const icon192 = generateStandard(192, 40, 23);
+      const icon512 = generateStandard(512, 100, 60);
+      const icon512m = generateMaskable(512);
 
       // Favicon
-      const favicon = document.querySelector("link[rel~='icon']") as HTMLLinkElement || Object.assign(document.createElement("link"), { rel: "icon" });
+      const favicon = document.querySelector("link[rel~='icon']") as HTMLLinkElement
+        || Object.assign(document.createElement("link"), { rel: "icon" });
+      favicon.type = "image/png";
       favicon.href = icon192;
       document.head.appendChild(favicon);
 
-      // Apple touch icon
-      const apple = Object.assign(document.createElement("link"), { rel: "apple-touch-icon", href: icon192 });
-      document.head.appendChild(apple);
+      // iOS Apple Touch ikony
+      [
+        { href: icon180, sizes: "180x180" },
+        { href: icon167, sizes: "167x167" },
+        { href: icon152, sizes: "152x152" },
+        { href: icon120, sizes: "120x120" },
+      ].forEach(({ href, sizes }) => {
+        const link = Object.assign(document.createElement("link"), {
+          rel: "apple-touch-icon",
+          href,
+        });
+        link.setAttribute("sizes", sizes);
+        document.head.appendChild(link);
+      });
 
-      // PWA Manifest
+      // iOS status bar
+      const metaStatusBar = Object.assign(document.createElement("meta"), {
+        name: "apple-mobile-web-app-status-bar-style",
+        content: "black-translucent",
+      });
+      const metaCapable = Object.assign(document.createElement("meta"), {
+        name: "apple-mobile-web-app-capable",
+        content: "yes",
+      });
+      const metaTitle = Object.assign(document.createElement("meta"), {
+        name: "apple-mobile-web-app-title",
+        content: "Svatba M&K",
+      });
+      document.head.append(metaStatusBar, metaCapable, metaTitle);
+
+      // PWA Manifest (Android + Chrome)
       const manifest = {
         name: "Svatba Mára & Kačka",
         short_name: "Svatba M&K",
@@ -93,13 +140,16 @@ export default function App() {
         background_color: "#000000",
         theme_color: "#1a0e12",
         icons: [
-          { src: icon192, sizes: "192x192", type: "image/png" },
-          { src: icon512, sizes: "512x512", type: "image/png", purpose: "any maskable" },
+          { src: icon192, sizes: "192x192", type: "image/png", purpose: "any" },
+          { src: icon512, sizes: "512x512", type: "image/png", purpose: "any" },
+          { src: icon512m, sizes: "512x512", type: "image/png", purpose: "maskable" },
         ],
       };
       const blob = new Blob([JSON.stringify(manifest)], { type: "application/json" });
-      const manifestUrl = URL.createObjectURL(blob);
-      const manifestLink = Object.assign(document.createElement("link"), { rel: "manifest", href: manifestUrl });
+      const manifestLink = Object.assign(document.createElement("link"), {
+        rel: "manifest",
+        href: URL.createObjectURL(blob),
+      });
       document.head.appendChild(manifestLink);
     };
   }, []);
@@ -238,27 +288,6 @@ export default function App() {
             filter: "brightness(2.5) contrast(1.1) drop-shadow(0 0 8px rgba(196,168,130,0.6))",
           }}
         />
-        {/* Přepínač */}
-        <nav className="flex rounded-full gap-0.5" style={{ background: "rgba(255,255,255,0.1)", padding: "3px", border: "1px solid rgba(255,255,255,0.15)" }}>
-          {(["prehled", "program"] as Tab[]).map((tab) => {
-            const labels: Record<Tab, string> = { prehled: "Přehled", program: "Harmonogram" };
-            const active = activeTab === tab;
-            return (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className="px-4 py-1.5 rounded-full text-xs font-medium transition-all"
-                style={{
-                  background: active ? "rgba(196,168,130,0.3)" : "transparent",
-                  color: active ? "#C4A882" : "rgba(255,255,255,0.45)",
-                  border: active ? "1px solid rgba(196,168,130,0.4)" : "1px solid transparent",
-                }}
-              >
-                {labels[tab]}
-              </button>
-            );
-          })}
-        </nav>
       </header>
 
       {/* Přepínač nad obsahem */}
