@@ -3,7 +3,7 @@ import logoKM from "../imports/logo_km-1.png";
 import headerPhoto from "../imports/Sni_mek_obrazovky_2026-06-15_v_15.09.03.png";
 import barnNightPhoto from "../imports/Sni_mek_obrazovky_2026-06-15_v_12.08.39.png";
 import couplePhoto from "../imports/IMG_0234_1.png";
-import { MapPin, Clock, Calendar, ChevronRight, Heart, Utensils, Music, Phone, ChevronDown, ArrowLeft, Shirt, Users } from "lucide-react";
+import { MapPin, Clock, Calendar, ChevronRight, Heart, Utensils, Music, Phone, ChevronDown, ArrowLeft, Shirt, Users, BookOpen } from "lucide-react";
 
 const schedule = [
   { time: "12:00", event: "Příjezd hostů", icon: Users },
@@ -16,17 +16,24 @@ const schedule = [
 ];
 
 const faqs = [
-  { q: "Kde se mohu ubytovat?", a: "Doporučujeme Pension Borohrádek (2 km) nebo Hotel Orlice v Týništi nad Orlicí (8 km). Rezervujte prosím s dostatečným předstihem." },
+  { q: "Kde se mohu ubytovat?", a: "Ubytování v první řadě zajišťujeme pro rodinu. Ostatním hostům budou k dispozici dvě možnosti – přespání ve stanu přímo v areálu, případně ubytování v nedalekém penzionu vzdáleném přibližně 15 minut jízdy.\n\nUbytování v penzionu je na vlastní náklady. Přesné informace a adresu doplníme později." },
   { q: "Je na místě parkování?", a: "Ano, přímo u areálu Stodoly Borohrádek je parkoviště s kapacitou cca 80 míst. Někam to narveme :-)" },
-  { q: "Mohu přivést děti?", a: "S cílem umožnit všem hostům, včetně rodičů, relaxační večer, rozhodli jsme uspořádat náš svatební den pouze pro dospělé. Doufáme, že toto předběžné oznámení nebude překážkou a i nadále se k nám připojíte oslavit tento jedinečný den. V případě dotazů nás určitě neváhejte kontaktovat." },
-  { q: "Svatební dary?", a: "Střechu nad hlavou už máme, ale to nejkrásnější teprve začíná. Místo tradičních darů nám můžete přispět na společné zážitky, cesty a sny, které nás čekají." },
-  { q: "Kdy začíná program?", a: "Sraz hostů je od 12:00. Obřad začíná v 13:00. Moc prosíme o dochvilnost." },
+  { q: "Jak se dostat na místo?", a: "Přímé spojení veřejnou dopravou bohužel není k dispozici, proto doporučujeme přijet autem. Parkování je zajištěno přímo u areálu." },
+  { q: "Mohu přivést děti?", a: "I když děti máme moc rádi, z kapacitních důvodů jsme se rozhodli oslavit tento den v dospělé společnosti. Budeme rádi, pokud si na tuto příležitost zajistíte hlídání a užijete si den bez rodičovských povinností.\n\nU nejmenších dětí však chápeme, že situace může být jiná. Pokud máte miminko do dvou let, které s vámi běžně cestuje nebo je ještě kojené, je možné jej po předchozí domluvě vzít s sebou. Prosíme jen o informaci předem. Dětské menu ani židličky bohužel nebudou k dispozici." },
+  { q: "Svatební dary?", a: "Vaše přítomnost je pro nás tím největším darem. Pokud byste nám přesto chtěli něco věnovat, budeme velmi rádi za příspěvek na naši svatební cestu. Náš domov už je vybavený, ale společných zážitků není nikdy dost. 🌍" },
+  { q: "Kdy začíná program?", a: "Prosíme, dorazte mezi 11:30 a 12:00. Obřad začíná přesně ve 13:00 a budeme rádi, pokud budete mít dostatek času na pohodlný příchod, přivítání a usazení." },
+  { q: "Jaké boty si mám vzít?", a: "Výběr obuvi necháme na vás, ale doporučujeme počítat s tím, že část dne strávíme venku.\n\nK obřadnímu místu vede zpevněná cesta, uvnitř stodoly je dlažba a před stodolou betonová plocha. Samotný obřad však proběhne v zeleni a v areálu je také dost travnatých ploch.\n\nPokud tedy přemýšlíte nad jehlovými podpatky, možná se bude hodit náhradní plán. 😊" },
+  { q: "Mohu si přivést doprovod?", a: "Jsme šťastní, že máme kolem sebe tolik skvělých lidí. Kapacita místa je však omezená, a proto vás prosíme, abyste respektovali osoby uvedené na pozvánce.\n\nPozvánka platí pouze pro ty, kterým byla adresována. Děkujeme za pochopení. ❤️" },
+  { q: "Mohu přivézt zvíře?", a: "Bohužel ne. Místo konání přítomnost zvířat neumožňuje, proto prosíme, nechte své chlupaté parťáky tentokrát doma. 🐾" },
+  { q: "Jak to bude s jídlem a pitím?", a: "Pohoštění i nápoje budou po celý den zajištěny pro všechny hosty.\n\nSpolečně zasedneme ke svatební tabuli, ale protože víme, že každý má rád něco jiného, rozhodli jsme se pro formu rautu. Díky tomu si každý bude moci vybrat přesně to, na co má chuť.\n\nAž se den přehoupne do večerních hodin, rozpálíme gril a přidáme další dobroty. Co přesně vás čeká, si zatím necháme jako malé překvapení. 🥂\n\nHlad ani žízeň rozhodně nehrozí." },
+  { q: "Jak dlouho bude oslava trvat?", a: "Po obřadu nás čeká společné odpoledne, večerní program i pořádná oslava.\n\nKonec necháváme otevřený – budeme rádi, když s námi vydržíte co nejdéle a pomůžete nám vytvořit vzpomínky, na které budeme ještě dlouho vzpomínat. 🥂" },
+  { q: "Dress code – Toskánská elegance", a: "Představte si pozdní léto v Toskánsku. Teplé barvy, dlouhé stoly, sklenku vína v ruce a atmosféru, která si na nic nehraje, a přesto je výjimečná.\n\nNaše svatba se ponese právě v tomto duchu – elegantně, uvolněně a s radostí. Budeme moc rádi, pokud se při výběru svého outfitu necháte inspirovat barevnou paletou svatby: Ganache, Mulberry, Bordeaux a Taupe. 🎨\n\nDámy, prosíme, ponechte odstíny bílé, ivory, champagne a krémové nevěstě.\n\nPánové, budeme rádi za oblek nebo kombinaci saka a společenských kalhot. Představte si spíše elegantní italskou oslavu než běžnou letní zahradní párty. 🍷\n\nNejdůležitější ale je, abyste se cítili dobře. Krásně oblečené hosty máme rádi, ale usměvavé ještě o něco víc." },
 ];
 
 const contacts = [
   { role: "Ženich", name: "Marek Čehovský", tel: "+420 721 573 785" },
   { role: "Nevěsta", name: "Kateřina Karpíšková", tel: "+420 608 916 651" },
-  { role: "Koordinátorka", name: "", tel: "876 543 543" },
+  { role: "Koordinátorka", name: "", tel: "+420 725 855 172", note: "V den svatby se prosím obracejte na naši koordinátorku" },
 ];
 
 type Tab = "prehled" | "program";
@@ -216,12 +223,18 @@ export default function App() {
             <h1 style={{ fontFamily: "'Lora', serif", fontWeight: 400, fontSize: "1.7rem", color: "#f5ede8" }}>
               Důležité kontakty
             </h1>
+            <h3 className="mt-2 text-sm leading-relaxed" style={{ color: "rgba(245,237,232,0.55)", fontWeight: 400 }}>
+              Máte otázku nebo potřebujete něco vyřešit? Jsme vám k dispozici.
+            </h3>
           </div>
           <div className="flex-1 overflow-y-auto px-4 py-2 space-y-3 max-w-lg mx-auto w-full pb-10">
             {contacts.map((c) => (
               <div key={c.role} className="rounded-2xl p-4 flex items-center justify-between gap-4" style={glassStrong}>
                 <div>
                   <p className="text-xs uppercase tracking-wider mb-0.5" style={{ color: "rgba(196,168,130,0.7)" }}>{c.role}</p>
+                  {c.note && (
+                    <p className="text-xs mb-1 leading-snug" style={{ color: "rgba(245,237,232,0.5)" }}>{c.note}</p>
+                  )}
                   {c.name && (
                     <p className="mb-0.5" style={{ fontFamily: "'Lora', serif", fontWeight: 500, fontSize: "1rem", color: "#f5ede8" }}>{c.name}</p>
                   )}
@@ -340,13 +353,17 @@ export default function App() {
                 </div>
               </div>
               <div className="px-5 pt-3 pb-6 text-center">
-                <p className="mb-2 uppercase tracking-widest text-xs" style={{ color: "rgba(196,168,130,0.7)", letterSpacing: "0.2em" }}>Vítejte</p>
-                <p className="mb-3 leading-snug" style={{ fontFamily: "'Lora', serif", fontStyle: "italic", fontSize: "1.1rem", color: "#f5ede8" }}>
-                  Dnes společně otevíráme novou kapitolu našeho příběhu.
+
+                <p className="mb-4 leading-snug" style={{ fontFamily: "'Lora', serif", fontStyle: "italic", fontSize: "1rem", color: "#f5ede8" }}>
+                  „Někteří lidé jsou pro sebe stvořeni. Jen jim to chvíli trvá, než na to přijdou."
                 </p>
-                <p className="text-sm leading-relaxed" style={{ color: "rgba(245,237,232,0.55)" }}>
-                  Máme radost, že právě vy jste součástí tohoto výjimečného dne a můžete ho prožít spolu s námi. Připravili jsme pro vás několik důležitých informací, aby pro vás byl tento den co nejpříjemnější, cítili jste se vítaní a mohli si naplno užít každý okamžik.
-                </p>
+                <div className="text-sm leading-relaxed space-y-3 text-left" style={{ color: "rgba(245,237,232,0.7)" }}>
+                  <p>Poznali jsme se jako puberťáci. Potom nás život na čas zavedl každého jiným směrem, aby nás po letech znovu přivedl k sobě. A právě teď jsme tady – připraveni říct si své ANO.</p>
+                  <p>Moc si vážíme toho, že tento výjimečný den budete sdílet právě s námi.</p>
+                  <p>Otevíráme novou kapitolu našeho příběhu a nemohli bychom si přát lepší společnost než lidi, které máme rádi. Připravili jsme pro vás tento web, abyste zde našli všechny důležité informace na jednom místě a v den svatby se mohli soustředit jen na jediné – užít si ho společně s námi.</p>
+                  <p>Těšíme se na vás. ❤️</p>
+                </div>
+                <p className="mt-4 font-medium" style={{ fontFamily: "'Lora', serif", fontStyle: "italic", color: "#f5ede8" }}>Káťa & Marek</p>
               </div>
             </section>
               </div>{/* end left col */}
@@ -447,7 +464,7 @@ export default function App() {
                 Formální & semi-formální
               </h3>
               <p className="text-sm leading-relaxed mb-4" style={{ color: "rgba(245,237,232,0.55)" }}>
-                Prosíme hosty o elegantní oblečení. Bílá je rezervována pro nevěstu, černá pro ženicha.
+                Prosíme hosty o elegantní oblečení. Bílá a jí podobné barvy jsou rezervovány pro nevěstu.
               </p>
               <p className="text-xs uppercase tracking-wider mb-3" style={{ color: "rgba(196,168,130,0.5)" }}>Inspirace barvami</p>
               <div className="flex items-center gap-3 flex-wrap">
@@ -456,7 +473,6 @@ export default function App() {
                   { hex: "#6E2D3A", name: "Mulberry" },
                   { hex: "#800020", name: "Bordeaux" },
                   { hex: "#C4A882", name: "Taupe" },
-                  { hex: "#F0E6D0", name: "Champagne" },
                 ].map((c) => (
                   <div key={c.hex} className="flex flex-col items-center gap-1.5">
                     <div className="w-10 h-10 rounded-full" style={{ backgroundColor: c.hex, boxShadow: `0 2px 12px ${c.hex}66, inset 0 1px 0 rgba(255,255,255,0.2)`, border: "1px solid rgba(255,255,255,0.12)" }} />
@@ -464,6 +480,17 @@ export default function App() {
                   </div>
                 ))}
               </div>
+              <button
+                onClick={() => {
+                  const idx = faqs.findIndex(f => f.q.includes("Toskánská elegance"));
+                  setOpenFaq(idx);
+                  setTimeout(() => document.getElementById("faq-item-" + idx)?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
+                }}
+                className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium transition-opacity hover:opacity-70"
+                style={{ color: "#C4A882" }}
+              >
+                Více informací <ChevronRight size={14} />
+              </button>
             </section>
 
             {/* Info karty */}
@@ -482,12 +509,40 @@ export default function App() {
               </div>
             </div>
 
+            {/* Facebook */}
+            <section className="rounded-3xl p-5" style={glass}>
+              <div className="flex items-center gap-2 mb-3">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="#C4A882" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M24 12.073C24 5.404 18.627 0 12 0S0 5.404 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.791-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.886v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/>
+                </svg>
+                <p className="text-xs uppercase tracking-widest" style={{ color: "#ffffff", letterSpacing: "0.18em" }}>Sledujte novinky</p>
+              </div>
+              <p className="text-sm leading-relaxed mb-3" style={{ color: "rgba(245,237,232,0.7)" }}>
+                Přidejte se k naší události na Facebooku, kde budeme průběžně sdílet novinky, důležité informace a případné aktualizace. 📲
+              </p>
+              <p className="text-sm" style={{ color: "rgba(196,168,130,0.7)" }}>👉 Odkaz doplníme brzy.</p>
+            </section>
+
+            {/* Náš příběh */}
+            <section className="rounded-3xl p-5" style={glass}>
+              <div className="flex items-center gap-2 mb-4">
+                <BookOpen size={18} style={{ color: "#C4A882" }} />
+                <p className="text-xs uppercase tracking-widest" style={{ color: "#ffffff", letterSpacing: "0.18em" }}>Náš příběh</p>
+              </div>
+              <div className="text-sm leading-relaxed space-y-3" style={{ color: "rgba(245,237,232,0.7)" }}>
+                <p>Někdy máme pocit, že jsme spolu teprve chvíli, a přitom už za námi stojí téměř sedm společných let. Sedmička je přece šťastné číslo – a každý další rok byl pro nás krásnější než ten předchozí.</p>
+                <p>Rádi cestujeme a objevujeme svět – v letadle, pod vodou i na pevnině. Káťa má občas hlavu v oblacích a Marek je ten, kdo ji s láskou vrací zpátky na zem. Oba máme na věci své názory a málokdy se jich vzdáváme, takže o zajímavé debaty ani zábavu u nás nikdy není nouze.</p>
+                <p>Důležitou součástí našeho života je také naše chlupatá parťačka Lilly. Ta už dávno rozhodla, že nám to spolu funguje – a její verdikt bereme velmi vážně. 🐾</p>
+                <p>Zasnoubili jsme se v srpnu 2024 v Miláně a o něco více než rok později si řekneme své ANO. Káťa by vám řekla, že na ty nejlepší věci se vyplatí počkat. A my jsme moc rádi, že tento okamžik budete prožívat s námi. ❤️</p>
+              </div>
+            </section>
+
             {/* FAQ */}
             <section>
               <p className="text-xs uppercase tracking-widest mb-3 px-1" style={{ color: "#ffffff", letterSpacing: "0.18em" }}>Časté dotazy</p>
               <div className="space-y-2">
                 {faqs.map((faq, i) => (
-                  <div key={i} className="rounded-2xl overflow-hidden" style={glass}>
+                  <div key={i} id={"faq-item-" + i} className="rounded-2xl overflow-hidden" style={glass}>
                     <button
                       onClick={() => setOpenFaq(openFaq === i ? null : i)}
                       className="w-full flex items-center justify-between px-4 py-3.5 text-left gap-3"
@@ -502,7 +557,9 @@ export default function App() {
                     {openFaq === i && (
                       <div className="px-4 pb-4">
                         <div className="h-px mb-3" style={{ background: "rgba(255,255,255,0.08)" }} />
-                        <p className="text-sm leading-relaxed" style={{ color: "rgba(245,237,232,0.55)" }}>{faq.a}</p>
+                        <div className="text-sm leading-relaxed space-y-2" style={{ color: "rgba(245,237,232,0.55)" }}>
+                          {faq.a.split("\n\n").map((para, i) => <p key={i}>{para}</p>)}
+                        </div>
                       </div>
                     )}
                   </div>
