@@ -3,11 +3,16 @@ import logoKM from "../imports/logo_km-1.png";
 import headerPhoto from "../imports/Sni_mek_obrazovky_2026-06-15_v_15.09.03.png";
 import barnNightPhoto from "../imports/Sni_mek_obrazovky_2026-06-15_v_12.08.39.png";
 import couplePhoto from "../imports/IMG_0234_1.png";
+import ringsIcon from "../imports/rings.svg";
 import { MapPin, Clock, Calendar, ChevronRight, Heart, Utensils, Music, Phone, ChevronDown, ArrowLeft, Shirt, Users, BookOpen } from "lucide-react";
+
+const RingIcon = ({ size = 13 }: { size?: number; color?: string }) => (
+  <img src={ringsIcon} width={size} height={size} alt="" />
+);
 
 const schedule = [
   { time: "12:00", event: "Příjezd hostů", icon: Users },
-  { time: "13:00", event: "Obřad", icon: Heart },
+  { time: "13:00", event: "Obřad", icon: RingIcon },
   { time: "14:50", event: "Slavnostní oběd", icon: Utensils },
   { time: "16:00", event: "Krájení dortu", icon: Utensils },
   { time: "16:30", event: "Grilovačka", icon: Utensils },
@@ -170,6 +175,7 @@ export default function App() {
   }, []);
 
   const [activeTab, setActiveTab] = useState<Tab>("prehled");
+  const [expandedColor, setExpandedColor] = useState<string | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [showContacts, setShowContacts] = useState(false);
 
@@ -467,15 +473,25 @@ export default function App() {
                 Prosíme hosty o elegantní oblečení. Bílá a jí podobné barvy jsou rezervovány pro nevěstu.
               </p>
               <p className="text-xs uppercase tracking-wider mb-3" style={{ color: "rgba(196,168,130,0.5)" }}>Inspirace barvami</p>
-              <div className="flex items-center gap-3 flex-wrap">
+              <div className="flex items-end gap-3 flex-nowrap">
                 {[
-                  { hex: "#6B3A3A", name: "Ganache" },
-                  { hex: "#6E2D3A", name: "Mulberry" },
-                  { hex: "#800020", name: "Bordeaux" },
-                  { hex: "#C4A882", name: "Taupe" },
+                  { hex: "#4B3328", name: "Ganache" },
+                  { hex: "#733D43", name: "Mulberry" },
+                  { hex: "#7B1E0A", name: "Bordeaux" },
+                  { hex: "#C0A79A", name: "Taupe" },
                 ].map((c) => (
-                  <div key={c.hex} className="flex flex-col items-center gap-1.5">
-                    <div className="w-10 h-10 rounded-full" style={{ backgroundColor: c.hex, boxShadow: `0 2px 12px ${c.hex}66, inset 0 1px 0 rgba(255,255,255,0.2)`, border: "1px solid rgba(255,255,255,0.12)" }} />
+                  <div key={c.hex} className="flex flex-col items-center gap-1.5" style={{ position: "relative", zIndex: expandedColor === c.hex ? 10 : 1 }}>
+                    <div
+                      onClick={() => setExpandedColor(expandedColor === c.hex ? null : c.hex)}
+                      className="rounded-full cursor-pointer"
+                      style={{
+                        backgroundColor: c.hex,
+                        boxShadow: "0 4px 10px rgba(0,0,0,0.5)",
+                        width: expandedColor === c.hex ? "120px" : "40px",
+                        height: expandedColor === c.hex ? "120px" : "40px",
+                        transition: "width 0.3s ease, height 0.3s ease",
+                      }}
+                    />
                     <span className="text-xs" style={{ color: "rgba(245,237,232,0.45)" }}>{c.name}</span>
                   </div>
                 ))}
@@ -578,16 +594,23 @@ export default function App() {
               <div className="space-y-2">
                 {schedule.map((item, i) => {
                   const Icon = item.icon;
+                  const obradIdx = schedule.findIndex(s => s.event === "Obřad");
+                  const blurred = i > obradIdx;
                   return (
-                    <div key={i} className="flex items-center gap-3 py-1">
-                      <div className="w-12 flex-shrink-0 text-right">
-                        <span className="text-xs font-medium tabular-nums" style={{ color: "#ffffff" }}>{item.time}</span>
-                      </div>
-                      <div className="relative z-10 w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "rgba(196,168,130,0.15)", border: "1px solid rgba(196,168,130,0.3)", backdropFilter: "blur(10px)" }}>
-                        <Icon size={13} style={{ color: "#C4A882" }} />
-                      </div>
-                      <div className="flex-1 rounded-xl px-4 py-3" style={glass}>
-                        <p className="text-sm font-medium" style={{ color: "#f5ede8" }}>{item.event}</p>
+                    <div key={i}>
+                      {i === obradIdx + 1 && (
+                        <p className="text-base mb-3 mt-1 px-1 font-medium" style={{ color: "#ffffff", fontStyle: "italic" }}>Brzy bude doplněno</p>
+                      )}
+                      <div className="flex items-center gap-3 py-1" style={blurred ? { filter: "blur(4px)", userSelect: "none", pointerEvents: "none" } : {}}>
+                        <div className="w-12 flex-shrink-0 text-right">
+                          <span className="text-xs font-medium tabular-nums" style={{ color: "#ffffff" }}>{item.time}</span>
+                        </div>
+                        <div className="relative z-10 w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "rgba(196,168,130,0.15)", border: "1px solid rgba(196,168,130,0.3)", backdropFilter: "blur(10px)" }}>
+                          <Icon size={13} style={{ color: "#C4A882" }} />
+                        </div>
+                        <div className="flex-1 rounded-xl px-4 py-3" style={glass}>
+                          <p className="text-sm font-medium" style={{ color: "#f5ede8" }}>{item.event}</p>
+                        </div>
                       </div>
                     </div>
                   );
