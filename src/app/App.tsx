@@ -166,13 +166,6 @@ export default function App() {
     };
   }, []);
 
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 60);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   const [activeTab, setActiveTab] = useState<Tab>("prehled");
   const [expandedColor, setExpandedColor] = useState<string | null>(null);
@@ -282,31 +275,6 @@ export default function App() {
             {days > 0 ? `${days} dní do svatby` : days === 0 ? "Dnes je ten den!" : "Právě jsme oddáni ♥"}
           </span>
         </div>
-      </header>
-
-      {/* Scroll header — zobrazí se až při scrollu */}
-      <header
-        className="fixed top-0 left-0 right-0 z-30 flex items-center justify-between px-4 py-2 transition-all duration-300"
-        style={{
-          background: scrolled ? "rgba(26,14,18,0.75)" : "transparent",
-          backdropFilter: scrolled ? "blur(24px)" : "blur(0px)",
-          WebkitBackdropFilter: scrolled ? "blur(24px)" : "blur(0px)",
-          borderBottom: scrolled ? "1px solid rgba(255,255,255,0.08)" : "1px solid transparent",
-          boxShadow: scrolled ? "0 2px 20px rgba(26,14,18,0.25)" : "none",
-          pointerEvents: scrolled ? "auto" : "none",
-          opacity: scrolled ? 1 : 0,
-        }}
-      >
-        {/* Logo */}
-        <img
-          src={logoKM}
-          alt="Káta & Marek"
-          style={{
-            height: "36px",
-            width: "auto",
-            filter: "brightness(2.5) contrast(1.1) drop-shadow(0 0 8px rgba(196,168,130,0.6))",
-          }}
-        />
       </header>
 
       {/* Přepínač nad obsahem */}
